@@ -5,6 +5,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 
 import '../widgets/user_image_picker.dart';
 
@@ -28,6 +29,9 @@ class _AuthScreenState extends State<AuthScreen> {
   var _enteredUsername = '';
   File? _selectedImage;
   var _isAuthenticating = false;
+
+  final FirebaseAuth _auth = FirebaseAuth.instance;
+  final GoogleSignIn googleSignIn = GoogleSignIn();
 
   void _submit() async {
     final isValid = _form.currentState!.validate();
@@ -79,6 +83,8 @@ class _AuthScreenState extends State<AuthScreen> {
       );
     }
   }
+  //
+  // Future<UserCredential?>
 
   @override
   Widget build(BuildContext context) {

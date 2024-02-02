@@ -9,6 +9,7 @@ class MessageBubble extends StatelessWidget {
     required this.username,
     required this.message,
     required this.isMe,
+    this.imageUrl,
   }) : isFirstInSequence = true;
 
   // Create a amessage bubble that continues the sequence.
@@ -16,6 +17,7 @@ class MessageBubble extends StatelessWidget {
     super.key,
     required this.message,
     required this.isMe,
+    this.imageUrl,
   })  : isFirstInSequence = false,
         userImage = null,
         username = null;
@@ -35,6 +37,7 @@ class MessageBubble extends StatelessWidget {
   // Not required if the message is not the first in a sequence.
   final String? username;
   final String message;
+  final String? imageUrl;
 
   // Controls how the MessageBubble will be aligned.
   final bool isMe;
@@ -65,11 +68,11 @@ class MessageBubble extends StatelessWidget {
           child: Row(
             // The side of the chat screen the message should show at.
             mainAxisAlignment:
-            isMe ? MainAxisAlignment.end : MainAxisAlignment.start,
+                isMe ? MainAxisAlignment.end : MainAxisAlignment.start,
             children: [
               Column(
                 crossAxisAlignment:
-                isMe ? CrossAxisAlignment.end : CrossAxisAlignment.start,
+                    isMe ? CrossAxisAlignment.end : CrossAxisAlignment.start,
                 children: [
                   // First messages in the sequence provide a visual buffer at
                   // the top.
@@ -123,18 +126,9 @@ class MessageBubble extends StatelessWidget {
                       vertical: 4,
                       horizontal: 12,
                     ),
-                    child: Text(
-                      message,
-                      style: TextStyle(
-                        // Add a little line spacing to make the text look nicer
-                        // when multilined.
-                        height: 1.3,
-                        color: isMe
-                            ? Colors.black87
-                            : theme.colorScheme.onSecondary,
-                      ),
-                      softWrap: true,
-                    ),
+
+                    //Need to Change
+                    child: _buildMessageContent(),
                   ),
                 ],
               ),
@@ -143,5 +137,27 @@ class MessageBubble extends StatelessWidget {
         ),
       ],
     );
+  }
+
+  // new method to handle the display of different types of message (image or text)
+  Widget _buildMessageContent() {
+    //handle the image display
+    if (imageUrl != '' && imageUrl!.isNotEmpty) {
+      // If the message is a URL, treat it as an image URL and display an Image widget
+      return Image.network(
+          imageUrl!,
+          width: 200, height: 150, fit: BoxFit.cover);
+    } else {
+      return Text(
+        message,
+        style: TextStyle(
+          // Add a little line spacing to make the text look nicer
+          // when multilined.
+          height: 1.3,
+          color: isMe ? Colors.black87 : Colors.purpleAccent[200],
+        ),
+        softWrap: true,
+      );
+    }
   }
 }

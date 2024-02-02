@@ -1,17 +1,21 @@
 //main.dart
+
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_project/provider/provider.dart';
 import 'package:firebase_project/screen/auth.dart';
 import 'package:firebase_project/screen/chat_screen.dart';
-import 'package:firebase_project/screen/splash_screen.dart';
 import 'package:flutter/material.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:provider/provider.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await Firebase.initializeApp(
-
-  );
-  runApp(const App());
+  await Firebase.initializeApp();
+  runApp(ChangeNotifierProvider(
+    create: (context) => ChatProvider(),
+    child: App(),
+  ));
+  // runApp(const App());
 }
 
 class App extends StatelessWidget {
@@ -19,26 +23,25 @@ class App extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'FlutterChat',
-      theme: ThemeData().copyWith(
-        useMaterial3: true,
-        colorScheme: ColorScheme.fromSeed(
-            seedColor: const Color.fromARGB(255, 63, 17, 177)),
-      ),
-      home: StreamBuilder(
-          stream: FirebaseAuth.instance.authStateChanges(),
-          builder: (ctx, snapshot) {
-            // if (snapshot.connectionState == ConnectionState.waiting) {
-            //   return const SplashScreen();
-            // }
+    // var app = Provider.of<App>(context);
 
-            if (snapshot.hasData) {
-              return const ChatScreen();
-            }
-
-            return const AuthScreen();
-          }),
-    );
+    return ChangeNotifierProvider<ChatProvider>(
+        create: (context) => ChatProvider(),
+        child: Consumer<ChatProvider>(
+          builder: (context, chatProvider, child) => MaterialApp(
+            title: 'Chat App Firebase',
+            theme: ThemeData(
+              primarySwatch: Colors.blue,
+            ),
+            home:
+                Consumer<ChatProvider>(builder: (context, chatProvider, child) {
+              if (chatProvider.user != null) {
+                return ChatScreen();
+              } else {
+                return AuthScreen();
+              }
+            }),
+          ),
+        ));
   }
 }
